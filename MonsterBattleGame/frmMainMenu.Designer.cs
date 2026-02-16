@@ -70,6 +70,7 @@
             btnExit.TabIndex = 2;
             btnExit.Text = "EXIT GAME";
             btnExit.UseVisualStyleBackColor = false;
+            btnExit.Click += btnExit_Click;
             // 
             // btnCredits
             // 
@@ -82,6 +83,7 @@
             btnCredits.TabIndex = 3;
             btnCredits.Text = "Credits";
             btnCredits.UseVisualStyleBackColor = false;
+            btnCredits.Click += btnCredits_Click;
             // 
             // frmMainMenu
             // 

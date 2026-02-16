@@ -63,9 +63,39 @@ namespace MonsterBattleGame.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap jplenio_forest_7456238_640 {
+            get {
+                object obj = ResourceManager.GetObject("jplenio-forest-7456238_640", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap openclipart_vectors_hero_152842_640 {
+            get {
+                object obj = ResourceManager.GetObject("openclipart-vectors-hero-152842_640", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap peterpang252_night_3129908_1280 {
             get {
                 object obj = ResourceManager.GetObject("peterpang252-night-3129908_1280", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap pixelcreatures_alien_671296_640 {
+            get {
+                object obj = ResourceManager.GetObject("pixelcreatures-alien-671296_640", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
