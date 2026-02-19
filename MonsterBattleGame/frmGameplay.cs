@@ -32,6 +32,9 @@ namespace MonsterBattleGame
         // Player's health points. When monsters reach the bottom, this decreases.
         private int playerHP = 50;
 
+        //Player's starting points
+        private int playerPoints = 0;
+
         // Default monster health, Stored in the PictureBox.Tag
         private int monsterHP = 100;
 
@@ -43,6 +46,7 @@ namespace MonsterBattleGame
 
         // Stores the monster the player clicked on when selecting a target
         private PictureBox selectedMonster = null;
+
 
         public frmGameplay()
         {
@@ -164,6 +168,8 @@ namespace MonsterBattleGame
                 // If HP is zero or below, remove the monster
                 if (hp <= 0)
                 {
+                    playerPoints += 25;
+                    lblPlayerPoints.Text = "Points: " + playerPoints;
                     pnlGameArea.Controls.Remove(selectedMonster);
                     listMonsters.Remove(selectedMonster);
                 }
@@ -196,6 +202,8 @@ namespace MonsterBattleGame
 
                         if (hp <= 0)
                         {
+                            playerPoints += 25;
+                            lblPlayerPoints.Text = "Points: " + playerPoints;
                             pnlGameArea.Controls.Remove(m);
                             listMonsters.Remove(m);
                         }
@@ -230,6 +238,8 @@ namespace MonsterBattleGame
 
                         if (hp <= 0)
                         {
+                            playerPoints += 25;
+                            lblPlayerPoints.Text = "Points: " + playerPoints;
                             pnlGameArea.Controls.Remove(m);
                             listMonsters.Remove(m);
                         }
