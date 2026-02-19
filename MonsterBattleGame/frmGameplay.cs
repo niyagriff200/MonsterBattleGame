@@ -23,11 +23,11 @@ namespace MonsterBattleGame
 
         // Array for monster starting row(s)
         // may expand later
-        private int[] rows = {50};
+        private int[] rows = { 50 };
 
         // Array of possible X positions (columns) where monsters can spawn.
         // Monsters will randomly choose one of these lanes.
-        private int[] cols = { 100, 300, 500, 700, 900, 1100};
+        private int[] cols = { 100, 300, 500, 700, 900};
 
         // Player's health points. When monsters reach the bottom, this decreases.
         private int playerHP = 50;
@@ -53,14 +53,6 @@ namespace MonsterBattleGame
         {
             InitializeComponent();
             frmOriginal = frmMainMenuObj;
-            Test();
-        }
-
-        private async void Test() //TODO: DON'T FORGET TO DELETE LATER
-        {
-            SpawnMonsters();
-            await Task.Delay(5000); // waits 5 second
-            MoveMonsters();
         }
 
         private void btnBack_Click(object sender, EventArgs e)
@@ -123,9 +115,9 @@ namespace MonsterBattleGame
                 if (m.Top >= pnlGameArea.Height - m.Height)
                 {
                     // Monster reached the player area → player takes damage
-                    playerHP -= 50;
+                    playerHP -= 10;
 
-                    // TODO: Update player HP label here
+                    lblPlayerHP.Text = "HP: " + playerHP;
 
                     // Remove the monster from the panel and the list
                     pnlGameArea.Controls.Remove(m);
@@ -246,6 +238,119 @@ namespace MonsterBattleGame
             }
         }
 
+        private void HighlightSelectableMonsters()
+        {
+            foreach (PictureBox m in listMonsters)
+            {
+                m.BorderStyle = BorderStyle.FixedSingle; // outline
+                m.BackColor = Color.Red; // means "clickable"
+            }
+        }
+
+        private void ResetSelection()
+        {
+            attackMode = "";
+            selectedMonster = null;
+
+            foreach (PictureBox m in listMonsters)
+            {
+                m.BackColor = Color.Transparent;
+                m.BorderStyle = BorderStyle.None;
+            }
+        }
+
+        private void CheckGameOver()
+        {
+            if (playerHP <= 0)
+            {
+                MessageBox.Show("Game Over! You were defeated.", "Game Over");
+
+                // Reset the game area
+                pnlGameArea.Controls.Clear();
+                listMonsters.Clear();
+
+                // Reset player HP
+                playerHP = 50;
+                lblPlayerHP.Text = "HP: " + playerHP;
+
+                // Reset attack mode
+                attackMode = "";
+                selectedMonster = null;
+            }
+        }
+
+        private void btnStartGame_Click(object sender, EventArgs e)
+        {
+            //Clear all monsters from the game area
+            pnlGameArea.Controls.Clear();
+
+            //Clear list of monsters
+            listMonsters.Clear();
+
+            //Reset player hp
+            playerHP = 50;
+            lblPlayerHP.Text = "HP: " + playerHP;
+
+
+            //Reset attack mode
+            attackMode = "";
+            selectedMonster = null;
+
+            //Spawn first monster
+            SpawnMonsters();
+        }
+
+        private void btnAttackSingle_Click(object sender, EventArgs e)
+        {
+            attackMode = "single";
+            HighlightSelectableMonsters();
+        }
+
+        private void btnAttackRow_Click(object sender, EventArgs e)
+        {
+            attackMode = "row";
+            HighlightSelectableMonsters();
+        }
+
+        private void btnColumnAttack_Click(object sender, EventArgs e)
+        {
+            attackMode = "column";
+            HighlightSelectableMonsters();
+        }
+
+        private void btnConfirm_Click(object sender, EventArgs e)
+        {
+            // Make sure an attack mode is selected
+            if (attackMode == "")
+            {
+                return;
+            }
+            // Apply the correct attack
+            if (attackMode == "single")
+            {
+                AttackSingle();
+            }
+            else if (attackMode == "row")
+            {
+                AttackRow();
+            }
+            else if (attackMode == "column")
+            {
+                AttackColumn();
+            }
+
+            // Reset selection visuals
+            ResetSelection();
+
+            // Move monsters after the player's attack
+            MoveMonsters();
+
+            // Spawn new monsters if fewer than 6 exist
+            SpawnMonsters();
+
+            // Check if the player died
+            CheckGameOver();
+        }
 
     }
 }
