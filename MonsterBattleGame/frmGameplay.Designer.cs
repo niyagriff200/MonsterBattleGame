@@ -41,13 +41,14 @@
             lblAttackDamageC = new Label();
             btnConfirm = new Button();
             lblPlayerPoints = new Label();
+            lblHighScore = new Label();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
             // btnBack
             // 
             btnBack.Font = new Font("Showcard Gothic", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnBack.Location = new Point(1028, 876);
+            btnBack.Location = new Point(1173, 1024);
             btnBack.Name = "btnBack";
             btnBack.Size = new Size(338, 58);
             btnBack.TabIndex = 0;
@@ -102,7 +103,7 @@
             pictureBox1.BackColor = Color.Transparent;
             pictureBox1.BackgroundImage = Properties.Resources.openclipart_vectors_hero_152842_640;
             pictureBox1.BackgroundImageLayout = ImageLayout.Stretch;
-            pictureBox1.Location = new Point(12, 642);
+            pictureBox1.Location = new Point(3, 790);
             pictureBox1.Name = "pictureBox1";
             pictureBox1.Size = new Size(185, 292);
             pictureBox1.TabIndex = 6;
@@ -111,7 +112,7 @@
             // btnStartGame
             // 
             btnStartGame.Font = new Font("Showcard Gothic", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnStartGame.Location = new Point(734, 876);
+            btnStartGame.Location = new Point(1213, 925);
             btnStartGame.Name = "btnStartGame";
             btnStartGame.Size = new Size(288, 58);
             btnStartGame.TabIndex = 7;
@@ -125,11 +126,11 @@
             lblPlayerHP.BackColor = Color.Transparent;
             lblPlayerHP.Font = new Font("Showcard Gothic", 14.1F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblPlayerHP.ForeColor = Color.Crimson;
-            lblPlayerHP.Location = new Point(203, 777);
+            lblPlayerHP.Location = new Point(203, 830);
             lblPlayerHP.Name = "lblPlayerHP";
-            lblPlayerHP.Size = new Size(176, 59);
+            lblPlayerHP.Size = new Size(201, 59);
             lblPlayerHP.TabIndex = 8;
-            lblPlayerHP.Text = "HP: 50";
+            lblPlayerHP.Text = "HP: 100";
             // 
             // lblAttackDamageS
             // 
@@ -184,11 +185,23 @@
             lblPlayerPoints.BackColor = Color.Transparent;
             lblPlayerPoints.Font = new Font("Showcard Gothic", 14.1F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblPlayerPoints.ForeColor = Color.Crimson;
-            lblPlayerPoints.Location = new Point(203, 856);
+            lblPlayerPoints.Location = new Point(203, 906);
             lblPlayerPoints.Name = "lblPlayerPoints";
             lblPlayerPoints.Size = new Size(253, 59);
             lblPlayerPoints.TabIndex = 13;
             lblPlayerPoints.Text = "POINTS: 0";
+            // 
+            // lblHighScore
+            // 
+            lblHighScore.AutoSize = true;
+            lblHighScore.BackColor = Color.Transparent;
+            lblHighScore.Font = new Font("Showcard Gothic", 14.1F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblHighScore.ForeColor = Color.Crimson;
+            lblHighScore.Location = new Point(203, 1026);
+            lblHighScore.Name = "lblHighScore";
+            lblHighScore.Size = new Size(367, 59);
+            lblHighScore.TabIndex = 14;
+            lblHighScore.Text = "High Score: 0";
             // 
             // frmGameplay
             // 
@@ -197,7 +210,8 @@
             BackColor = Color.Silver;
             BackgroundImage = Properties.Resources.jplenio_forest_7456238_640;
             BackgroundImageLayout = ImageLayout.Stretch;
-            ClientSize = new Size(1378, 946);
+            ClientSize = new Size(1523, 1094);
+            Controls.Add(lblHighScore);
             Controls.Add(lblPlayerPoints);
             Controls.Add(btnConfirm);
             Controls.Add(lblAttackDamageC);
@@ -234,5 +248,6 @@
         private Label lblAttackDamageC;
         private Button btnConfirm;
         private Label lblPlayerPoints;
+        private Label lblHighScore;
     }
 }

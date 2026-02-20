@@ -4,8 +4,9 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace MonsterBattleGame
@@ -30,7 +31,7 @@ namespace MonsterBattleGame
         private int[] cols = { 100, 300, 500, 700, 900};
 
         // Player's health points. When monsters reach the bottom, this decreases.
-        private int playerHP = 50;
+        private int playerHP = 100;
 
         //Player's starting points
         private int playerPoints = 0;
@@ -47,6 +48,8 @@ namespace MonsterBattleGame
         // Stores the monster the player clicked on when selecting a target
         private PictureBox selectedMonster = null;
 
+        //Contains player score
+        private string scoreFile = "score.txt";
 
         public frmGameplay()
         {
@@ -70,86 +73,202 @@ namespace MonsterBattleGame
             frmOriginal.Show();
         }
 
+        // Stores the monster's current HP value and its HP label
+        public class MonsterData
+        {
+            // Holds the monster's HP value
+            public int HP;
+
+            // Holds the label that displays the monster's HP
+            public Label HPLabel;
+
+            // Assigns the HP value and label reference when the monster is created
+            public MonsterData(int hp, Label label)
+            {
+                HP = hp;
+                HPLabel = label;
+            }
+        }
+
+
+
         public void SpawnMonsters()
         {
-            // Only spawn a monster if fewer than 6 are currently active
-            if (listMonsters.Count < 6)
+            try
             {
-                // Create a new monster as a PictureBox
-                PictureBox monster = new PictureBox();
+                //max number of monsters
+                int maxMonsters = 4;
 
-                // Assign the monster image and make sure it scales correctly
-                monster.Image = Properties.Resources.pixelcreatures_alien_671296_640;
-                monster.SizeMode = PictureBoxSizeMode.StretchImage;
+                //subtract 1 from max monsters, because list starts at 0, (0, 1, 2, 3)
+                int availableSlots = maxMonsters - listMonsters.Count;
 
-                // Set the monster's size (100x100 pixels)
-                monster.Size = new Size(100, 100);
+                if (availableSlots <= 0) //if there are no available slots return...
+                {
+                    return;
+                }
 
-                // Store the monster's HP inside the Tag property
-                monster.Tag = monsterHP;
+                // Randomly spawn 1 or 2 monsters
+                int monstersToSpawn = rand.Next(1, 3);
+                monstersToSpawn = Math.Min(monstersToSpawn, availableSlots);
 
-                // Set the monster's starting vertical position (Y)
-                // Using rows[0] makes this easy to change later
-                monster.Top = rows[0];
 
-                // Choose a random column (X position) from the cols array
-                int startCol = cols[rand.Next(cols.Length)];
-                monster.Left = startCol;
+                // Only spawn a monster if fewer than the max number are active
+                for (int i = 0; i < monstersToSpawn; i++)
+                { 
+                    // Create a new monster as a PictureBox
+                    PictureBox monster = new PictureBox();
 
-                // Allow the monster to be clicked for attack selection
-                monster.Click += Monster_Click;
+                    // Assign the monster image and make sure it scales correctly
+                    monster.Image = Properties.Resources.pixelcreatures_alien_671296_640;
+                    monster.SizeMode = PictureBoxSizeMode.StretchImage;
 
-                // Add the monster to the gameplay panel and to the list
-                pnlGameArea.Controls.Add(monster);
-                listMonsters.Add(monster);
+                    // Set the monster's size (75x75 pixels)
+                    monster.Size = new Size(75, 75);
+
+                    // Store the monster's HP inside the Tag property
+                    monster.Tag = monsterHP;
+
+                    // Set the monster's starting vertical position (Y)
+                    // Using rows[0] makes this easy to change later
+                    monster.Top = rows[0];
+
+                    // Choose a random column (X position) from the cols array
+                    int startCol = cols[rand.Next(cols.Length)];
+                    monster.Left = startCol;
+                    // Creates a label to display the monster's HP
+                    Label hpLabel = new Label();
+
+                    // Sets the label text to the monster's HP
+                    hpLabel.Text = monsterHP.ToString();
+
+                    // Sets the label font and color
+                    hpLabel.Font = new Font("Arial", 10, FontStyle.Bold);
+                    hpLabel.ForeColor = Color.White;
+
+                    // Enables automatic sizing
+                    hpLabel.AutoSize = true;
+
+                    // Positions the label above the monster
+                    hpLabel.Left = monster.Left + (monster.Width - hpLabel.Width) / 2;
+                    hpLabel.Top = monster.Top - 40;
+
+                    // Stores the label inside the monster's Tag along with HP
+                    monster.Tag = new MonsterData(monsterHP, hpLabel);
+
+                    // Adds the label to the game area
+                    pnlGameArea.Controls.Add(hpLabel);
+
+                    // Allow the monster to be clicked for attack selection
+                    monster.Click += Monster_Click;
+
+                    // Add the monster to the gameplay panel and to the list
+                    pnlGameArea.Controls.Add(monster);
+                    listMonsters.Add(monster);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error spawning monster: " + ex.Message);
             }
         }
 
         public void MoveMonsters()
         {
-            // Loop backwards so we can safely remove monsters during iteration
-            for (int i = listMonsters.Count - 1; i >= 0; i--)
+            try
             {
-                PictureBox m = listMonsters[i];
-
-                // Move the monster downward by 100 pixels
-                m.Top += 100;
-
-                // Check if the monster has reached the bottom of the panel
-                if (m.Top >= pnlGameArea.Height - m.Height)
+                // Loop backwards so we can safely remove monsters during iteration
+                for (int i = listMonsters.Count - 1; i >= 0; i--)
                 {
-                    // Monster reached the player area → player takes damage
-                    playerHP -= 10;
+                    PictureBox m = listMonsters[i];
 
-                    lblPlayerHP.Text = "HP: " + playerHP;
+                    // Move the monster downward by 100 pixels
+                    m.Top += 100;
 
-                    // Remove the monster from the panel and the list
-                    pnlGameArea.Controls.Remove(m);
-                    listMonsters.Remove(m);
+                    //Move the label downward with the monster
+                    MonsterData data = (MonsterData)m.Tag;
+                    data.HPLabel.Top = m.Top - 40;
+                    data.HPLabel.Left = m.Left + (m.Width - data.HPLabel.Width) / 2;
+
+
+                    // Check if the monster has reached the bottom of the panel
+                    if (m.Top >= pnlGameArea.Height - m.Height)
+                    {
+                        // Monster reached the player area → player takes damage
+                        playerHP -= 10;
+
+                        lblPlayerHP.Text = "HP: " + playerHP;
+
+                        // Remove the monster from the panel and the list
+                        pnlGameArea.Controls.Remove(data.HPLabel);
+                        pnlGameArea.Controls.Remove(m);
+                        listMonsters.Remove(m);
+                    }
                 }
+            } catch (Exception ex)
+            {
+                MessageBox.Show("Error moving monster: " + ex.Message);
             }
         }
 
         private void Monster_Click(object sender, EventArgs e)
         {
-            // Only allow selection if an attack mode is active
+            // Allows selection only when an attack mode is active
             if (attackMode != "")
             {
                 PictureBox clicked = sender as PictureBox;
 
-                // Reset all monsters to the "can be selected" color
+                // Resets all monsters to the selectable color
                 foreach (PictureBox m in listMonsters)
                 {
                     m.BackColor = Color.Red;
                 }
 
-                // Highlight the monster the player clicked on
-                clicked.BackColor = Color.Green;
-
-                // Store this monster as the selected target
+                // Stores the clicked monster as the selected target
                 selectedMonster = clicked;
+
+                // Highlights based on the selected attack mode
+                if (attackMode == "single")
+                {
+                    // Highlights only the clicked monster
+                    clicked.BackColor = Color.Green;
+                }
+                else if (attackMode == "row")
+                {
+                    // Gets the Y position of the selected monster
+                    int targetRow = clicked.Top;
+
+                    // Defines the height range for the row
+                    int rowHeight = 100;
+
+                    // Highlights all monsters in the same row band
+                    foreach (PictureBox m in listMonsters)
+                    {
+                        if (m.Top >= targetRow && m.Top < targetRow + rowHeight)
+                        {
+                            m.BackColor = Color.Green;
+                        }
+                    }
+                }
+                else if (attackMode == "column")
+                {
+                    // Gets the X position of the selected monster
+                    int targetCol = clicked.Left;
+
+                    // Defines the width range for the column
+                    int colWidth = 100;
+
+                    // Highlights all monsters in the same column band
+                    foreach (PictureBox m in listMonsters)
+                    {
+                        if (m.Left >= targetCol && m.Left < targetCol + colWidth)
+                        {
+                            m.BackColor = Color.Green;
+                        }
+                    }
+                }
             }
         }
+
 
         public void AttackSingle()
         {
@@ -157,21 +276,19 @@ namespace MonsterBattleGame
             if (selectedMonster != null)
             {
                 // Get the monster's current HP from the Tag
-                int hp = (int)selectedMonster.Tag;
-
-                // Apply damage
-                hp -= 50;
-
-                // Store updated HP back into the Tag
-                selectedMonster.Tag = hp;
+                MonsterData data = (MonsterData)selectedMonster.Tag;
+                data.HP -= 50;
+                data.HPLabel.Text = data.HP.ToString();
 
                 // If HP is zero or below, remove the monster
-                if (hp <= 0)
+                if (data.HP <= 0)
                 {
                     playerPoints += 25;
                     lblPlayerPoints.Text = "Points: " + playerPoints;
+                    pnlGameArea.Controls.Remove(data.HPLabel);
                     pnlGameArea.Controls.Remove(selectedMonster);
                     listMonsters.Remove(selectedMonster);
+
                 }
             }
         }
@@ -184,8 +301,7 @@ namespace MonsterBattleGame
                 // Determine the row (Y position) of the selected monster
                 int targetRow = selectedMonster.Top;
 
-                // Height of one row. Since monsters are 100px tall,
-                // this means "hit everything in the same horizontal band."
+                // Height of one row
                 int rowHeight = 100;
 
                 // Loop backwards so we can remove monsters safely
@@ -196,14 +312,22 @@ namespace MonsterBattleGame
                     // Check if this monster is in the same row band
                     if (m.Top >= targetRow && m.Top < targetRow + rowHeight)
                     {
-                        int hp = (int)m.Tag;
-                        hp -= 25; // row attack deals less damage
-                        m.Tag = hp;
+                        // Get the monster's current HP from the Tag
+                        MonsterData data = (MonsterData)m.Tag;
 
-                        if (hp <= 0)
+                        // Reduce HP
+                        data.HP -= 25;
+
+                        // Update label
+                        data.HPLabel.Text = data.HP.ToString();
+
+                        // Remove if dead
+                        if (data.HP <= 0)
                         {
                             playerPoints += 25;
                             lblPlayerPoints.Text = "Points: " + playerPoints;
+
+                            pnlGameArea.Controls.Remove(data.HPLabel);
                             pnlGameArea.Controls.Remove(m);
                             listMonsters.Remove(m);
                         }
@@ -211,6 +335,7 @@ namespace MonsterBattleGame
                 }
             }
         }
+
 
         public void AttackColumn()
         {
@@ -220,8 +345,7 @@ namespace MonsterBattleGame
                 // Determine the column (X position) of the selected monster
                 int targetCol = selectedMonster.Left;
 
-                // Width of one column. Monsters are 100px wide,
-                // so this hits everything in the same vertical lane.
+                // Width of one column
                 int colWidth = 100;
 
                 // Loop backwards so we can remove monsters safely
@@ -232,14 +356,22 @@ namespace MonsterBattleGame
                     // Check if this monster is in the same column band
                     if (m.Left >= targetCol && m.Left < targetCol + colWidth)
                     {
-                        int hp = (int)m.Tag;
-                        hp -= 25; // column attack damage
-                        m.Tag = hp;
+                        // Get the monster's current HP from the Tag
+                        MonsterData data = (MonsterData)m.Tag;
 
-                        if (hp <= 0)
+                        // Reduce HP
+                        data.HP -= 25;
+
+                        // Update label
+                        data.HPLabel.Text = data.HP.ToString();
+
+                        // Remove if dead
+                        if (data.HP <= 0)
                         {
                             playerPoints += 25;
                             lblPlayerPoints.Text = "Points: " + playerPoints;
+
+                            pnlGameArea.Controls.Remove(data.HPLabel);
                             pnlGameArea.Controls.Remove(m);
                             listMonsters.Remove(m);
                         }
@@ -247,6 +379,7 @@ namespace MonsterBattleGame
                 }
             }
         }
+
 
         private void HighlightSelectableMonsters()
         {
@@ -268,29 +401,108 @@ namespace MonsterBattleGame
                 m.BorderStyle = BorderStyle.None;
             }
         }
+        private void ShowGameOverLabel()
+        {
+            // Creates a new label for the Game Over message
+            Label lblGameOver = new Label();
+
+            // Sets the text displayed on the label
+            lblGameOver.Text = "GAME OVER";
+
+            // Sets the font style and size for the label
+            lblGameOver.Font = new Font("Showcard Gothic", 24, FontStyle.Bold);
+
+            // Sets the text color to red
+            lblGameOver.ForeColor = Color.Red;
+
+            // Enables automatic sizing based on the text
+            lblGameOver.AutoSize = true;
+
+            // Centers the label horizontally inside the game area panel
+            lblGameOver.Left = (pnlGameArea.Width - lblGameOver.Width) / 2;
+
+            // Centers the label vertically inside the game area panel
+            lblGameOver.Top = (pnlGameArea.Height - lblGameOver.Height) / 2;
+
+            // Adds the label to the game area panel
+            pnlGameArea.Controls.Add(lblGameOver);
+        }
+
 
         private void CheckGameOver()
         {
+            // Checks if the player's HP is zero or below
             if (playerHP <= 0)
             {
-                MessageBox.Show("Game Over! You were defeated.", "Game Over");
+                int savedHighScore = 0;
 
-                // Reset the game area
+                try
+                {
+                    // Checks if the score file exists
+                    if (File.Exists(scoreFile))
+                    {
+                        // Reads the saved score from the file
+                        string savedScoreText = File.ReadAllText(scoreFile);
+
+                        // Converts the saved score text into an integer
+                        int.TryParse(savedScoreText, out savedHighScore);
+                    }
+
+                    // Saves the new score only if it is higher than the saved score
+                    if (playerPoints > savedHighScore)
+                    {
+                        // Writes the new high score to the file
+                        File.WriteAllText(scoreFile, playerPoints.ToString());
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Displays an error message if saving fails
+                    MessageBox.Show("Error saving score: " + ex.Message);
+                }
+
+                // Removes all controls from the game area panel
                 pnlGameArea.Controls.Clear();
+
+                // Clears the list of active monsters
                 listMonsters.Clear();
 
-                // Reset player HP
+                // Resets the player's HP to the starting value
                 playerHP = 50;
+
+                // Updates the HP label to show the reset value
                 lblPlayerHP.Text = "HP: " + playerHP;
 
-                // Reset attack mode
+                // Clears the current attack mode
                 attackMode = "";
+
+                // Clears the selected monster reference
                 selectedMonster = null;
+
+                // Displays the Game Over label inside the game area
+                ShowGameOverLabel();
+
+                btnStartGame.Enabled = true;
+                btnStartGame.Text = "Play Again?";
             }
         }
 
+
         private void btnStartGame_Click(object sender, EventArgs e)
         {
+            try //check if the file exists
+            {
+                if (File.Exists(scoreFile))
+                {
+                    string savedScore = File.ReadAllText(scoreFile);
+                    lblHighScore.Text = "High Score: " + savedScore;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading score: " + ex.Message);
+            }
+
             //Clear all monsters from the game area
             pnlGameArea.Controls.Clear();
 
@@ -298,9 +510,12 @@ namespace MonsterBattleGame
             listMonsters.Clear();
 
             //Reset player hp
-            playerHP = 50;
+            playerHP = 100;
             lblPlayerHP.Text = "HP: " + playerHP;
 
+            //Reset player points
+            playerPoints = 0;
+            lblPlayerPoints.Text = "Points: " + playerPoints;
 
             //Reset attack mode
             attackMode = "";
@@ -308,6 +523,8 @@ namespace MonsterBattleGame
 
             //Spawn first monster
             SpawnMonsters();
+
+            btnStartGame.Enabled = false;
         }
 
         private void btnAttackSingle_Click(object sender, EventArgs e)
