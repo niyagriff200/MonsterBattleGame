@@ -4,9 +4,12 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Media;
+
 
 
 namespace MonsterBattleGame
@@ -49,7 +52,9 @@ namespace MonsterBattleGame
         private PictureBox selectedMonster = null;
 
         //Contains player score
-        private string scoreFile = "score.txt";
+        private string scoreFile = "score.json";
+
+
 
         public frmGameplay()
         {
@@ -283,8 +288,11 @@ namespace MonsterBattleGame
                 // If HP is zero or below, remove the monster
                 if (data.HP <= 0)
                 {
+                    PlayDeathSound();
+
                     playerPoints += 25;
                     lblPlayerPoints.Text = "Points: " + playerPoints;
+
                     pnlGameArea.Controls.Remove(data.HPLabel);
                     pnlGameArea.Controls.Remove(selectedMonster);
                     listMonsters.Remove(selectedMonster);
@@ -324,6 +332,8 @@ namespace MonsterBattleGame
                         // Remove if dead
                         if (data.HP <= 0)
                         {
+                            PlayDeathSound();
+
                             playerPoints += 25;
                             lblPlayerPoints.Text = "Points: " + playerPoints;
 
@@ -362,12 +372,16 @@ namespace MonsterBattleGame
                         // Reduce HP
                         data.HP -= 25;
 
+                        
+
                         // Update label
                         data.HPLabel.Text = data.HP.ToString();
 
                         // Remove if dead
                         if (data.HP <= 0)
                         {
+                            PlayDeathSound();
+
                             playerPoints += 25;
                             lblPlayerPoints.Text = "Points: " + playerPoints;
 
@@ -444,15 +458,26 @@ namespace MonsterBattleGame
                         // Reads the saved score from the file
                         string savedScoreText = File.ReadAllText(scoreFile);
 
-                        // Converts the saved score text into an integer
-                        int.TryParse(savedScoreText, out savedHighScore);
+                        // Converts the saved score text from JSON into a dictionary
+                        Dictionary<string, int> scoreData = JsonSerializer.Deserialize<Dictionary<string, int>>(savedScoreText);
+
+                        // Gets the saved high score from the dictionary
+                        if (scoreData != null && scoreData.ContainsKey("HighScore"))
+                        {
+                            savedHighScore = scoreData["HighScore"];
+                        }
                     }
 
                     // Saves the new score only if it is higher than the saved score
                     if (playerPoints > savedHighScore)
                     {
-                        // Writes the new high score to the file
-                        File.WriteAllText(scoreFile, playerPoints.ToString());
+                        // Creates a dictionary to store the high score
+                        Dictionary<string, int> newScoreData = new Dictionary<string, int>();
+                        newScoreData["HighScore"] = playerPoints;
+
+                        // Writes the new high score to the file in JSON format
+                        string json = JsonSerializer.Serialize(newScoreData);
+                        File.WriteAllText(scoreFile, json);
                     }
                 }
                 catch (Exception ex)
@@ -466,12 +491,6 @@ namespace MonsterBattleGame
 
                 // Clears the list of active monsters
                 listMonsters.Clear();
-
-                // Resets the player's HP to the starting value
-                playerHP = 50;
-
-                // Updates the HP label to show the reset value
-                lblPlayerHP.Text = "HP: " + playerHP;
 
                 // Clears the current attack mode
                 attackMode = "";
@@ -494,14 +513,24 @@ namespace MonsterBattleGame
             {
                 if (File.Exists(scoreFile))
                 {
-                    string savedScore = File.ReadAllText(scoreFile);
-                    lblHighScore.Text = "High Score: " + savedScore;
+                    // Reads the saved score from the file
+                    string savedScoreText = File.ReadAllText(scoreFile);
+
+                    // Converts the saved score text from JSON into a dictionary
+                    Dictionary<string, int> scoreData = JsonSerializer.Deserialize<Dictionary<string, int>>(savedScoreText);
+
+                    // Displays the saved high score
+                    if (scoreData != null && scoreData.ContainsKey("HighScore"))
+                    {
+                        lblHighScore.Text = "High Score: " + scoreData["HighScore"];
+                    }
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error loading score: " + ex.Message);
             }
+
 
             //Clear all monsters from the game area
             pnlGameArea.Controls.Clear();
@@ -579,5 +608,17 @@ namespace MonsterBattleGame
             CheckGameOver();
         }
 
+        private void PlayDeathSound()
+        {
+            try
+            {
+                SoundPlayer sound = new SoundPlayer(Properties.Resources.deathSound);
+                sound.Play();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error playing sound: " + ex.Message);
+            }
+        }
     }
 }
