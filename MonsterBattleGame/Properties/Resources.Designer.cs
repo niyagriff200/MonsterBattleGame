@@ -70,12 +70,30 @@ namespace MonsterBattleGame.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream gameOverSound {
+            get {
+                return ResourceManager.GetStream("gameOverSound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap jplenio_forest_7456238_640 {
             get {
                 object obj = ResourceManager.GetObject("jplenio-forest-7456238_640", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream monsterAttackSound {
+            get {
+                return ResourceManager.GetStream("monsterAttackSound", resourceCulture);
             }
         }
         
@@ -106,6 +124,15 @@ namespace MonsterBattleGame.Properties {
             get {
                 object obj = ResourceManager.GetObject("pixelcreatures-alien-671296_640", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream playerAttackSound {
+            get {
+                return ResourceManager.GetStream("playerAttackSound", resourceCulture);
             }
         }
     }

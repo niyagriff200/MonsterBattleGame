@@ -133,4 +133,13 @@
   <data name="deathSound" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\deathSound.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="monsterAttackSound" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\attackSound.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="playerAttackSound" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\dragon-studio-explosion-sound-effect-425455.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="gameOverSound" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\universfield-game-over-deep-male-voice-clip-352695.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

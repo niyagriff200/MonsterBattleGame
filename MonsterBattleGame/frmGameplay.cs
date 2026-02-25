@@ -201,6 +201,9 @@ namespace MonsterBattleGame
                         // Monster reached the player area → player takes damage
                         playerHP -= 10;
 
+                        //play monster attack sound
+                        PlayMonsterAttackSound();
+
                         lblPlayerHP.Text = "HP: " + playerHP;
 
                         // Remove the monster from the panel and the list
@@ -285,6 +288,9 @@ namespace MonsterBattleGame
                 data.HP -= 50;
                 data.HPLabel.Text = data.HP.ToString();
 
+                //plays Player attack sound
+                PlayPlayerAttackSound();
+
                 // If HP is zero or below, remove the monster
                 if (data.HP <= 0)
                 {
@@ -325,6 +331,9 @@ namespace MonsterBattleGame
 
                         // Reduce HP
                         data.HP -= 25;
+
+                        //Plays player attack sound
+                        PlayPlayerAttackSound();
 
                         // Update label
                         data.HPLabel.Text = data.HP.ToString();
@@ -372,7 +381,9 @@ namespace MonsterBattleGame
                         // Reduce HP
                         data.HP -= 25;
 
-                        
+                        //Plays Player attack sound
+                        PlayPlayerAttackSound();
+
 
                         // Update label
                         data.HPLabel.Text = data.HP.ToString();
@@ -501,6 +512,9 @@ namespace MonsterBattleGame
                 // Displays the Game Over label inside the game area
                 ShowGameOverLabel();
 
+                //Play Game Over Sound
+                PlayGameOverSound();
+
                 btnStartGame.Enabled = true;
                 btnStartGame.Text = "Play Again?";
             }
@@ -613,6 +627,48 @@ namespace MonsterBattleGame
             try
             {
                 SoundPlayer sound = new SoundPlayer(Properties.Resources.deathSound);
+                sound.Play();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error playing sound: " + ex.Message);
+            }
+        }
+
+        private void PlayMonsterAttackSound()
+        {
+
+            try
+            {
+                SoundPlayer sound = new SoundPlayer(Properties.Resources.monsterAttackSound);
+                sound.Play();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error playing sound: " + ex.Message);
+            }
+        }
+
+        private void PlayPlayerAttackSound()
+        {
+
+            try
+            {
+                SoundPlayer sound = new SoundPlayer(Properties.Resources.playerAttackSound);
+                sound.Play();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error playing sound: " + ex.Message);
+            }
+        }
+
+        private void PlayGameOverSound()
+        {
+
+            try
+            {
+                SoundPlayer sound = new SoundPlayer(Properties.Resources.gameOverSound);
                 sound.Play();
             }
             catch (Exception ex)
