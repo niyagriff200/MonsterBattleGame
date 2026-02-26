@@ -42,9 +42,6 @@ namespace MonsterBattleGame
         // Default monster health, Stored in the PictureBox.Tag
         private int monsterHP = 100;
 
-        // Tracks whether it is the player's turn (used later for turn-based logic)
-        private bool playerTurn = false;
-
         // Stores which attack mode the player has chosen ("single", "row", "column")
         private string attackMode = "";
 
@@ -198,7 +195,7 @@ namespace MonsterBattleGame
                     // Check if the monster has reached the bottom of the panel
                     if (m.Top >= pnlGameArea.Height - m.Height)
                     {
-                        // Monster reached the player area → player takes damage
+                        // Monster reached the player area (player takes damage)
                         playerHP -= 10;
 
                         //play monster attack sound
@@ -415,7 +412,7 @@ namespace MonsterBattleGame
             }
         }
 
-        private void ResetSelection()
+        private void ResetSelection() 
         {
             attackMode = "";
             selectedMonster = null;
@@ -615,7 +612,7 @@ namespace MonsterBattleGame
             // Move monsters after the player's attack
             MoveMonsters();
 
-            // Spawn new monsters if fewer than 6 exist
+            // Spawn new monsters if fewer than 4 exist
             SpawnMonsters();
 
             // Check if the player died
@@ -626,12 +623,12 @@ namespace MonsterBattleGame
         {
             try
             {
-                SoundPlayer sound = new SoundPlayer(Properties.Resources.deathSound);
-                sound.Play();
+                SoundPlayer sound = new SoundPlayer(Properties.Resources.deathSound); //create new soundplayer, called sound
+                sound.Play(); //play sound
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error playing sound: " + ex.Message);
+                MessageBox.Show("Error playing sound: " + ex.Message); //catch any exception
             }
         }
 
@@ -640,12 +637,12 @@ namespace MonsterBattleGame
 
             try
             {
-                SoundPlayer sound = new SoundPlayer(Properties.Resources.monsterAttackSound);
-                sound.Play();
+                SoundPlayer sound = new SoundPlayer(Properties.Resources.monsterAttackSound); //create new soundplayer, called sound
+                sound.Play(); //play sound
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error playing sound: " + ex.Message);
+                MessageBox.Show("Error playing sound: " + ex.Message);  //catch any exception
             }
         }
 
@@ -654,12 +651,12 @@ namespace MonsterBattleGame
 
             try
             {
-                SoundPlayer sound = new SoundPlayer(Properties.Resources.playerAttackSound);
-                sound.Play();
+                SoundPlayer sound = new SoundPlayer(Properties.Resources.playerAttackSound); //create new soundplayer, called sound
+                sound.Play(); //play sound
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error playing sound: " + ex.Message);
+                MessageBox.Show("Error playing sound: " + ex.Message);  //catch any exception
             }
         }
 
@@ -668,12 +665,12 @@ namespace MonsterBattleGame
 
             try
             {
-                SoundPlayer sound = new SoundPlayer(Properties.Resources.gameOverSound);
-                sound.Play();
+                SoundPlayer sound = new SoundPlayer(Properties.Resources.gameOverSound); //create new soundplayer, called sound
+                sound.Play(); //play sound
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error playing sound: " + ex.Message);
+                MessageBox.Show("Error playing sound: " + ex.Message);  //catch any exception
             }
         }
     }
