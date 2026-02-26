@@ -137,6 +137,7 @@ namespace MonsterBattleGame
                     // Choose a random column (X position) from the cols array
                     int startCol = cols[rand.Next(cols.Length)];
                     monster.Left = startCol;
+
                     // Creates a label to display the monster's HP
                     Label hpLabel = new Label();
 
